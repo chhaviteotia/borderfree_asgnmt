@@ -1,0 +1,18 @@
+.container-fluid{
+    font-family: Poppins-Regular;
+}
+.nav-link, .navbar-brand{
+    font-size: 25px;
+}
+.nav-item:hover{
+    background-color:#fffdfd;
+}
+.contact{
+    margin-top: 3px;
+}
+.active, .navbar-brand{
+    color:#0000008C !important;
+}
+.navbar-brand{
+    font-size: 25px !important;
+}
