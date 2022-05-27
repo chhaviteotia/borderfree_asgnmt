@@ -23,7 +23,7 @@ const PORT = process.env.PORT;
 // }
 
 // app.get('/products', middleware, (req, res) => {
-//     res.send('Hello World from about');
+//     res.send('Hello World from product');
 // });
 
 
@@ -34,6 +34,9 @@ app.get('/signin', (req, res) => {
 app.get('/signup', (req, res) => {
     res.send('Hello World from registration');
 });
+app.get('/logout', (req,res)=>{
+    res.send("successfully log out")
+})
 
 app.listen(PORT, () =>{
     console.log('Server is running!!');

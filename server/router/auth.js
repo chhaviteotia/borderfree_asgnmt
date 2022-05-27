@@ -77,15 +77,16 @@ router.post('/register', async (req, res) =>{
 
 // user login route
 router.post('/signin', async(req, res) =>{
+    const{email, password} = req.body;
+
     try{
-        const{email, password} = req.body;
 
         if(!email || !password){
             return res.status(422).json({error:"PLease fill the data"})
         }
         
         // ===== To check if user mail id exists or not  and password entered by user matches with id =======
-        const userLogin = await User.findOne({email:email});
+        const userLogin = await User.findOne({email});
         if(!userLogin){
             res.json({message:"Invalid credentials!"});
         }else{
@@ -99,7 +100,13 @@ router.post('/signin', async(req, res) =>{
                 expires: new Date(Date.now + 2589200000),
                 httpOnly:true
             });
-
+            res.json({
+                _id: userLogin._id,
+                name: userLogin.name,
+                email: userLogin.email,
+                isAdmin: userLogin.isAdmin,
+                jwtoken: token,
+            })
 
             if(!isMatch){
                 res.status(400).json({error:"Invalid credential"});
@@ -112,6 +119,17 @@ router.post('/signin', async(req, res) =>{
         console.log(err);
     }
 });
+
+router.get('/logout', async (req, res) => {
+    // Set token to none and expire after 5 seconds
+    res.cookie('jwtoken', 'none', {
+        expires: new Date(Date.now() + 5 * 1000),
+        httpOnly: true,
+    })
+    res
+        .status(200)
+        .json({ success: true, message: 'User logged out successfully' })
+})
 
 
 // product page verification

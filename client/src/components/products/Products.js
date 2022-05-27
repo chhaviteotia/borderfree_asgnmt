@@ -12,32 +12,68 @@ import item9 from "../images/item9.jpg";
 import Modal from 'react-modal';
 import "./Products.css";
 import Navbar2 from '../navbar/Navbar2';
+import { useNavigate } from 'react-router-dom';
 
 const Products = () => {
   const [summaryModal, setSummaryModal] = useState(false);
   const [products, setProducts] = useState([]);
   const [details, setDetails] = useState([]);
+  const [ctg, setCategory] = useState("");
+
 
   const [count, setCount] = useState({
     1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0,
     17: 0, 18: 0, 19: 0, 20: 0
   })
 
-  const fetchData = () => {
-    fetch("https://fakestoreapi.com/products")
+  
+  const navigate=useNavigate();
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/products', {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      });
+
+      const data = await res.json();
+      // console.log(data);
+      // setUserData(data);
+
+      if (!res.status === 200) {
+        const error = new Error(res.error);
+        throw error;
+      }
+
+    } catch (err) {
+      console.log(err);
+      navigate('/');
+    }
+    if(ctg != ""){
+      fetch(`https://fakestoreapi.com/products/category/${ctg}`)
       .then(response => {
         return response.json()
-      })
-      .then(data => {
+      }).then(data => {
         setProducts(data)
         console.log(data)
       })
+      .catch(err=>console.log(err))
+    }
   }
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [ctg])
 
+  const handleSelect = (e) => {
+    e.preventDefault()
+    setCategory(e.target.value);
+    fetchData()
+    
+  };
   const showSummary = (e) => {
     console.log(e.target.id)
     var prev = count[e.target.id]
@@ -49,6 +85,7 @@ const Products = () => {
       .then(data => {
         setDetails(data)
         console.log(data)
+        
       })
     console.log(!summaryModal)
     setSummaryModal(true);
@@ -107,6 +144,14 @@ const Products = () => {
         </div>
       </div>
       <div className='image-card-heading'><h1><strong>Available Products</strong></h1></div>
+      <select  onChange={handleSelect}>
+        <option value="">Select</option>
+        <option value="jewelery">Jewelery</option>
+        <option value="electronics">Electronics</option>
+        <option value="men's clothing">Men's Clothing</option>
+        <option value="women's clothing">Women's clothing</option>
+      </select>
+      
 
       <div className='image-card'>
         <div>
